@@ -1,0 +1,30 @@
+# shellcheck disable=SC2034,SC2154,SC2164
+pkgname=zd-git
+pkgver=0.1.0.beta.1.r20.gb3d0640
+pkgrel=1
+pkgdesc="Extendable fuzzy directory selector"
+arch=("x86_64")
+url="https://github.com/deorbil/zd"
+license=("MIT")
+depends=("fzf")
+makedepends=("cargo" "git")
+provides=("zd")
+conflicts=("zd")
+options=("!lto")
+source=("git+https://github.com/deorbil/zd.git")
+sha256sums=("SKIP")
+
+pkgver() {
+  cd "$srcdir/zd"
+  git describe --long | sed "s/^v//;s/\([^-]*-g\)/r\1/;s/-/./g"
+}
+
+build() {
+  cd "$srcdir/zd"
+  cargo build --release --locked
+}
+
+package() {
+  cd "$srcdir/zd"
+  install -Dm755 "target/release/zd" "$pkgdir/usr/bin/zd"
+}
